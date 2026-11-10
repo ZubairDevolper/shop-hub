@@ -12,10 +12,12 @@ const ThemeToggle = () => {
         const savedTheme = localStorage.getItem('theme') || 'light'
 
         setTheme(savedTheme)
+
         document.documentElement.classList.toggle(
             'dark',
             savedTheme === 'dark'
         )
+
         setMounted(true)
     }, [])
 
@@ -23,36 +25,31 @@ const ThemeToggle = () => {
         const newTheme = theme === 'light' ? 'dark' : 'light'
 
         setTheme(newTheme)
+
         document.documentElement.classList.toggle(
             'dark',
             newTheme === 'dark'
         )
+
         localStorage.setItem('theme', newTheme)
     }
 
-    if (!mounted) {
-        return (
-            <button
-                type="button"
-                aria-label="Change theme"
-                className="h-10 w-10 rounded-full border border-gray-300"
-            />
-        )
-    }
+    if (!mounted) return null
 
     return (
         <button
             type="button"
             onClick={toggleTheme}
-            aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-            className="flex h-10 w-10 items-center justify-center
-            rounded-full border border-gray-300 bg-white text-gray-800
-            transition-colors hover:bg-gray-100
-            dark:border-gray-700 dark:bg-gray-800 dark:text-yellow-300 
-            dark:hover:bg-gray-700"
+            aria-label="Change theme"
+            className="flex h-8 w-8 items-center justify-center
+            rounded-full border border-gray-300
+            bg-gray-100 text-gray-800
+            transition-colors hover:bg-gray-200
+            dark:border-gray-700 dark:bg-gray-800
+            dark:text-yellow-300 dark:hover:bg-gray-700"
         >
             {theme === 'light' ? (
-                <TbSettingsFilled size={25} />
+                <AiOutlineMoon size={22} />
             ) : (
                 <AiOutlineSun size={22} />
             )}
