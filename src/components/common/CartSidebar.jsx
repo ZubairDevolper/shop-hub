@@ -1,22 +1,28 @@
+
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import {
     AiOutlineClose,
     AiOutlineMinus,
     AiOutlinePlus,
-    AiOutlineDelete,
 } from 'react-icons/ai'
 import { TbShoppingCartFilled } from 'react-icons/tb'
+import { MdDelete } from 'react-icons/md'
+import { FiCheckCircle } from 'react-icons/fi'
+
 import { useCart } from '@/context/CartContext'
 import { useLanguage } from '@/context/LanguageContext'
-import { MdDelete } from 'react-icons/md'
 import CheckoutModal from './CheckoutModal'
 
 const CartSidebar = () => {
+    const [showRemovePopup, setShowRemovePopup] = useState(false)
+    const [removedProduct, setRemovedProduct] = useState('')
     const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
+
     const { t, tp } = useLanguage()
+
     const {
         items,
         isOpen,
@@ -27,8 +33,42 @@ const CartSidebar = () => {
         totalItems,
     } = useCart()
 
+    // Remove popup timer
+    useEffect(() => {
+        if (!showRemovePopup) return
+
+        const timer = setTimeout(() => {
+            setShowRemovePopup(false)
+        }, 2000)
+
+        return () => clearTimeout(timer)
+    }, [showRemovePopup])
+
+    // Remove product from cart
+    const handleRemoveItem = (item) => {
+        setRemovedProduct(tp(item, 'name'))
+        removeFromCart(item.id)
+        setShowRemovePopup(true)
+    }
+
     return (
         <>
+            {/* Remove Success Popup */}
+            {showRemovePopup && (
+                <div className="fixed bottom-5 right-5 z-[100] animate-in slide-in-from-right duration-300">
+                    <div className="flex items-center gap-3 bg-green-900 shadow-xl rounded-xl p-3 min-w-[280px]">
+                        <FiCheckCircle
+                            size={25}
+                            className="text-white shrink-0"
+                        />
+
+                        <p className="text-sm text-white font-medium">
+                            {removedProduct} remove item from cart
+                        </p>
+                    </div>
+                </div>
+            )}
+
             {/* Background Overlay */}
             <div
                 onClick={closeCart}
@@ -51,7 +91,7 @@ const CartSidebar = () => {
                             className="text-[#1976D2] dark:text-blue-400 shrink-0"
                         />
 
-                        <h2 className="text-xl sm:text-xl font-bold text-gray-800 dark:text-gray-100 whitespace-nowrap">
+                        <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 whitespace-nowrap">
                             {t('cart.title')}
                         </h2>
 
@@ -79,6 +119,7 @@ const CartSidebar = () => {
                         <ul className="flex flex-col gap-6">
                             {items.map((item) => (
                                 <li key={item.id} className="flex gap-5">
+
                                     {/* Left Side: Image + Quantity */}
                                     <div className="w-[88px] shrink-0 flex flex-col items-center">
                                         <div className="relative w-[88px] h-[88px] rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800">
@@ -92,11 +133,17 @@ const CartSidebar = () => {
                                         </div>
 
                                         {/* Quantity Below Image */}
-                                        <div className="relative z-10 flex items-center justify-center gap-1 mt-4">
-                                            <p className="text-base text-gray-600 dark:text-gray-300 ml-15">{t('cart.quantity')}</p>
+                                        <div className="relative z-10 flex items-center justify-center gap-1 mt-4 ml-10">
+                                            <p className="text-base text-gray-600 dark:text-gray-300">
+                                                {t('cart.quantity')}
+                                            </p>
+
                                             <button
                                                 onClick={() =>
-                                                    updateQuantity(item.id, item.quantity - 1)
+                                                    updateQuantity(
+                                                        item.id,
+                                                        item.quantity - 1
+                                                    )
                                                 }
                                                 disabled={item.quantity <= 1}
                                                 aria-label={t('cart.decrease')}
@@ -111,7 +158,10 @@ const CartSidebar = () => {
 
                                             <button
                                                 onClick={() =>
-                                                    updateQuantity(item.id, item.quantity + 1)
+                                                    updateQuantity(
+                                                        item.id,
+                                                        item.quantity + 1
+                                                    )
                                                 }
                                                 aria-label={t('cart.increase')}
                                                 className="p-1 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 cursor-pointer"
@@ -128,9 +178,12 @@ const CartSidebar = () => {
                                                 {tp(item, 'name')}
                                             </h3>
 
+                                            {/* Remove Button */}
                                             <button
-                                                onClick={() => removeFromCart(item.id)}
-                                                aria-label={t('cart.remove', { name: tp(item, 'name') })}
+                                                onClick={() => handleRemoveItem(item)}
+                                                aria-label={t('cart.remove', {
+                                                    name: tp(item, 'name'),
+                                                })}
                                                 className="text-red-500 hover:text-red-700 transition-colors cursor-pointer shrink-0"
                                             >
                                                 <MdDelete size={21} />
@@ -173,6 +226,7 @@ const CartSidebar = () => {
                 </div>
             </aside>
 
+            {/* Checkout Modal */}
             <CheckoutModal
                 isOpen={isCheckoutOpen}
                 onClose={() => setIsCheckoutOpen(false)}
@@ -181,4 +235,4 @@ const CartSidebar = () => {
     )
 }
 
-export default CartSidebar;
+export default CartSidebar
