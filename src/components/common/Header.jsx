@@ -17,7 +17,7 @@ const Header = () => {
 
                 {/* Logo */}
                 <div className="flex items-center gap-3">
-                    <AiOutlineShop size={30} />
+                    <AiOutlineShop size={30} /> 
                     <h1 className=" sm:text-xl text-sm font-bold">Shop Hub</h1>
                 </div>
 
@@ -46,4 +46,4 @@ const Header = () => {
     )
 }
 
-export default Header
+export default Header;

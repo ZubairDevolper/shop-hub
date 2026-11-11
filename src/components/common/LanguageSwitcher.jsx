@@ -6,7 +6,7 @@ import { languages, useLanguage } from '@/context/LanguageContext'
 
 const LanguageSwitcher = () => {
     const { language, setLanguage, t } = useLanguage()
-    const [open, setOpen] = useState(false)
+    const [open, setOpen] = useState(false) 
     const containerRef = useRef(null)
 
     useEffect(() => {

@@ -3,7 +3,7 @@
 import { useCallback, useSyncExternalStore } from 'react'
 
 const STORAGE_KEY = 'language'
-const supportedLanguages = ['en', 'nl']
+export const supportedLanguages = ['en', 'nl']
 const listeners = new Set()
 let currentLanguage = null
 
@@ -32,8 +32,7 @@ export const setLanguage = (language) => {
     listeners.forEach((listener) => listener())
 }
 
-const translations = {
-    en: {
+export const translations = {    en: {
         header: {
             brand: 'Shop Hub',
             changeLanguage: 'Change language',
